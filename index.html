@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content="초 단위까지 보여주는 귀여운 펫 시계" />
+    <meta name="theme-color" content="#fff8ee" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#17130f" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Clock Pet" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/pet.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />
+    <title>Clock Pet</title>
+  </head>
+  <body>
+    <button
+      class="icon-btn settings-btn"
+      id="open-settings"
+      type="button"
+      aria-label="설정"
+      aria-haspopup="dialog"
+      aria-controls="settings"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path
+          d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"
+        />
+        <circle cx="12" cy="12" r="3" />
+      </svg>
+    </button>
+
+    <main class="app">
+      <h1 class="sr-only">Clock Pet</h1>
+
+      <div class="pet" id="pet" role="img"></div>
+
+      <section class="clock" aria-label="현재 시각">
+        <time class="clock-time" id="clock" role="timer" aria-live="off" aria-atomic="true">
+          <span class="period" id="period" aria-hidden="true" hidden></span>
+          <span class="digits" aria-hidden="true"
+            ><span id="hm">--:--</span><span class="sec" id="sec">:--</span></span
+          >
+          <span class="sr-only" id="spoken"></span>
+        </time>
+        <p class="date" id="date"></p>
+      </section>
+    </main>
+
+    <dialog class="settings" id="settings" aria-labelledby="settings-title">
+      <div class="settings-inner">
+        <header class="settings-header">
+          <h2 id="settings-title" tabindex="-1" autofocus>설정</h2>
+          <button class="icon-btn" id="close-settings" type="button" aria-label="닫기">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
+          </button>
+        </header>
+
+        <form class="settings-form" id="settings-form">
+          <fieldset class="field">
+            <legend>펫</legend>
+            <div class="pet-options" id="pet-options"></div>
+          </fieldset>
+
+          <fieldset class="field">
+            <legend>시간 형식</legend>
+            <div class="segmented">
+              <label><input type="radio" name="hour12" value="false" /><span>24시간</span></label>
+              <label><input type="radio" name="hour12" value="true" /><span>12시간</span></label>
+            </div>
+          </fieldset>
+
+          <div class="field">
+            <label class="switch-row">
+              <span>날짜 표시</span>
+              <input type="checkbox" name="showDate" role="switch" />
+            </label>
+          </div>
+        </form>
+      </div>
+    </dialog>
+
+    <noscript><p class="noscript">시계를 보려면 JavaScript를 켜 주세요.</p></noscript>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

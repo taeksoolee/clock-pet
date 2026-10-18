@@ -1,0 +1,701 @@
+:root {
+  --bg: #fff8ee;
+  --fg: #2b2118;
+  --muted: #6b5b4d;
+  --accent: #c2410c;
+  --surface: #ffffff;
+  --border: #e7d9c6;
+  --control-border: #8a7766;
+
+  --pet-body: #f6d7a7;
+  --pet-ear-inner: #f4a6a0;
+  --pet-line: #4a2f20;
+  --pet-cheek: #f28b82;
+  --pet-tongue: #f07167;
+  --pet-spark: #f59f00;
+  --pet-zzz: #7c8db5;
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #17130f;
+    --fg: #f7efe5;
+    --muted: #b5a797;
+    --accent: #ff9a5c;
+    --surface: #241e18;
+    --border: #3a3129;
+    --control-border: #8f7f6f;
+    --pet-spark: #ffd43b;
+    --pet-zzz: #a5b4d8;
+  }
+}
+
+/* iOS 다이내믹 타입(설정 > 텍스트 크기)을 따르도록 기준 글자 크기를 시스템에서 받는다 */
+@supports (font: -apple-system-body) {
+  html {
+    font: -apple-system-body;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: ui-rounded, 'SF Pro Rounded', system-ui, -apple-system, 'Apple SD Gothic Neo', sans-serif;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ───── 레이아웃 ───── */
+
+.app {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: clamp(8px, 3svh, 32px);
+  padding-block: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-bottom));
+  padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right));
+}
+
+.pet {
+  width: min(56vw, 34svh, 280px);
+  aspect-ratio: 1;
+}
+
+.clock {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.clock-time {
+  display: block;
+}
+
+.digits {
+  display: block;
+  /* "00:00:00" 8글자가 화면 폭 안에 들어오도록 vw와 svh 중 작은 값을 쓴다 */
+  font-size: min(17.5vw, 22svh, 168px);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.sec {
+  color: var(--accent);
+}
+
+.period {
+  display: block;
+  margin-bottom: 0.25em;
+  font-size: clamp(1rem, 5vw, 1.75rem);
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.date {
+  margin: 0;
+  font-size: clamp(1rem, 4.2vw, 1.5rem);
+  color: var(--muted);
+}
+
+/* 가로 모드(폰을 눕혔을 때): 펫과 시계를 나란히 */
+@media (orientation: landscape) and (max-height: 600px) {
+  .app {
+    grid-auto-flow: column;
+    gap: clamp(16px, 4vw, 48px);
+  }
+
+  .pet {
+    width: min(30vw, 62svh);
+  }
+
+  .digits {
+    font-size: min(11vw, 28svh);
+  }
+
+  .clock {
+    justify-items: start;
+    text-align: start;
+  }
+
+  .period {
+    font-size: clamp(1rem, 2.6vw, 1.5rem);
+  }
+}
+
+.noscript {
+  padding: 16px;
+  text-align: center;
+}
+
+/* ───── 펫 ───── */
+
+.pet-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.pet-svg * {
+  transform-box: fill-box;
+}
+
+.ear,
+.body {
+  fill: var(--pet-body);
+  stroke: var(--pet-line);
+  stroke-width: 5;
+  stroke-linejoin: round;
+}
+
+.ear-inner {
+  fill: var(--pet-ear-inner);
+}
+
+.tail {
+  transform-origin: left bottom;
+}
+
+.tail-stroke {
+  fill: none;
+  stroke: var(--pet-line);
+  stroke-width: 14;
+  stroke-linecap: round;
+}
+
+.tail-puff {
+  fill: var(--pet-body);
+  stroke: var(--pet-line);
+  stroke-width: 5;
+}
+
+.ear-dark {
+  fill: var(--pet-ear-inner);
+}
+
+.muzzle {
+  fill: #ecc79e;
+}
+
+.eyes-open {
+  fill: var(--pet-line);
+  transform-origin: center;
+}
+
+.pet .eyes-open {
+  animation: blink 4.2s infinite;
+}
+
+.eyes-open .shine {
+  fill: #fff;
+}
+
+.eyes-closed path,
+.mouth {
+  fill: none;
+  stroke: var(--pet-line);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+.cheek {
+  fill: var(--pet-cheek);
+  opacity: 0.55;
+}
+
+.mouth-open ellipse {
+  fill: var(--pet-line);
+}
+
+.mouth-open .tongue {
+  fill: var(--pet-tongue);
+}
+
+.sparkles path {
+  fill: var(--pet-spark);
+  transform-origin: center;
+}
+
+.zzz text {
+  fill: var(--pet-zzz);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.breathe {
+  transform-origin: center bottom;
+}
+
+.pet .breathe {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+.body-group {
+  transform-origin: center bottom;
+}
+
+/* 상태별로 보이는 부분 전환 */
+.eyes-closed,
+.mouth-open,
+.sparkles,
+.zzz {
+  display: none;
+}
+
+.pet[data-state='sleep'] .eyes-open,
+.pet[data-state='sleep'] .mouth {
+  display: none;
+}
+.pet[data-state='sleep'] .eyes-closed,
+.pet[data-state='sleep'] .zzz {
+  display: inline;
+}
+
+.pet[data-state='excited'] .mouth,
+.pet[data-state='celebrate'] .mouth {
+  display: none;
+}
+.pet[data-state='excited'] .mouth-open,
+.pet[data-state='celebrate'] .mouth-open,
+.pet[data-state='celebrate'] .sparkles {
+  display: inline;
+}
+
+/* 상태별 움직임 */
+.pet.tick-a .tail {
+  animation: wag-a 0.6s ease-in-out;
+}
+.pet.tick-b .tail {
+  animation: wag-b 0.6s ease-in-out;
+}
+
+.pet[data-state='excited'] .body-group {
+  animation: bounce 0.5s ease-in-out infinite;
+}
+
+.pet[data-state='celebrate'] .body-group {
+  animation: jump 0.8s cubic-bezier(0.3, 0, 0.3, 1) infinite;
+}
+.pet[data-state='celebrate'] .sparkles path {
+  animation: twinkle 0.8s ease-in-out infinite;
+}
+.pet[data-state='celebrate'] .sparkles path:nth-child(even) {
+  animation-delay: 0.4s;
+}
+
+.pet[data-state='sleep'] .breathe {
+  animation-duration: 5s;
+}
+.pet[data-state='sleep'] .tail {
+  animation: none;
+}
+.pet[data-state='sleep'] .zzz text {
+  animation: float 3s ease-in-out infinite;
+}
+.pet[data-state='sleep'] .zzz text:nth-child(2) {
+  animation-delay: 0.5s;
+}
+.pet[data-state='sleep'] .zzz text:nth-child(3) {
+  animation-delay: 1s;
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.015, 1.03);
+  }
+}
+
+@keyframes blink {
+  0%,
+  94%,
+  100% {
+    transform: scaleY(1);
+  }
+  97% {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes wag-a {
+  50% {
+    transform: rotate(-14deg);
+  }
+}
+@keyframes wag-b {
+  50% {
+    transform: rotate(-14deg);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6%);
+  }
+}
+
+@keyframes jump {
+  0%,
+  100% {
+    transform: translateY(0) scale(1.04, 0.96);
+  }
+  45% {
+    transform: translateY(-14%) scale(0.97, 1.03);
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    transform: scale(0.6);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(4px);
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-8px);
+    opacity: 0;
+  }
+}
+
+/* 움직임 줄이기 설정을 켠 사용자에게는 애니메이션 없이 표정만 바꿔 보여준다 */
+@media (prefers-reduced-motion: reduce) {
+  .pet *,
+  .pet *::before,
+  .pet *::after {
+    animation: none !important;
+  }
+}
+
+/* ───── 아이콘 버튼 ───── */
+
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  /* 애플 HIG 최소 터치 영역 44pt */
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.icon-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon-btn:active {
+  background: var(--border);
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.settings-btn {
+  position: fixed;
+  z-index: 1;
+  top: max(8px, env(safe-area-inset-top));
+  right: max(8px, env(safe-area-inset-right));
+}
+
+/* ───── 설정 화면 (전체 덮기) ───── */
+
+.settings {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: var(--bg);
+  color: var(--fg);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.settings::backdrop {
+  background: var(--bg);
+}
+
+.settings[open] {
+  animation: sheet-in 0.22s ease-out;
+}
+
+.settings-inner {
+  max-width: 560px;
+  margin: 0 auto;
+  padding-block: max(8px, env(safe-area-inset-top)) max(24px, env(safe-area-inset-bottom));
+  padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right));
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+  /* 닫기 버튼이 메인 화면의 설정 버튼과 같은 자리에 오도록 맞춘다 */
+  margin-right: -8px;
+}
+
+.settings-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+/* 열릴 때 제목으로 포커스를 옮기기 위한 것이라 링은 표시하지 않는다 */
+.settings-header h2:focus {
+  outline: none;
+}
+
+.settings-form {
+  display: grid;
+  gap: 28px;
+  margin-top: 16px;
+}
+
+.field {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.field legend {
+  margin-bottom: 12px;
+  padding: 0;
+  font-weight: 700;
+  font-size: 1.0625rem;
+}
+
+/* 펫 선택 */
+.pet-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.pet-option {
+  display: block;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pet-option-card {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+}
+
+.pet-preview {
+  display: block;
+  width: min(100%, 96px);
+  aspect-ratio: 1;
+}
+
+.pet-option-name {
+  font-weight: 600;
+}
+
+.pet-option input:checked + .pet-option-card {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.pet-option input:checked + .pet-option-card .pet-option-name::after {
+  content: ' ✓';
+  color: var(--accent);
+}
+
+.pet-option input:focus-visible + .pet-option-card {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (min-width: 520px) {
+  .pet-options {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* 세그먼트 버튼 (시간 형식) */
+.segmented {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.segmented label {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.segmented input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.segmented span {
+  display: grid;
+  place-items: center;
+  min-height: 44px;
+  border-radius: 10px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.segmented input:checked + span {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.segmented input:focus-visible + span {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* 스위치 (날짜 표시) */
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 56px;
+  padding: 0 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  font-weight: 700;
+  font-size: 1.0625rem;
+  cursor: pointer;
+}
+
+.switch-row input {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  flex: none;
+  width: 52px;
+  height: 32px;
+  margin: 0;
+  border: 2px solid var(--control-border);
+  border-radius: 999px;
+  background: var(--bg);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.switch-row input::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--control-border);
+  transition: transform 0.15s;
+}
+
+.switch-row input:checked {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.switch-row input:checked::after {
+  background: var(--bg);
+  transform: translateX(20px);
+}
+
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings[open] {
+    animation: none;
+  }
+
+  .switch-row input,
+  .switch-row input::after {
+    transition: none;
+  }
+}
