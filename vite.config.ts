@@ -1,9 +1,8 @@
 import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
-// GitHub Pages는 https://<user>.github.io/clock-pet/ 하위 경로로 서비스된다
+// https://clock-pet.taeksoolee.com 루트에서 서비스된다 (GitHub Pages 커스텀 도메인)
 export default defineConfig({
-  base: '/clock-pet/',
   plugins: [
     VitePWA({
       registerType: 'autoUpdate',
@@ -14,8 +13,8 @@ export default defineConfig({
         short_name: 'Clock Pet',
         description: '초 단위까지 보여주는 귀여운 펫 시계',
         lang: 'ko',
-        start_url: '/clock-pet/',
-        scope: '/clock-pet/',
+        start_url: '/',
+        scope: '/',
         display: 'standalone',
         background_color: '#fff8ee',
         theme_color: '#fff8ee',
