@@ -85,6 +85,14 @@ body {
   padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right));
 }
 
+/* 화면 켜짐 유지 중 OLED 번인을 막으려고 1분마다 몇 px 씩 옮긴다 (main.ts).
+   .app 자체를 옮기면 스크롤이 생기므로 안쪽 요소만 옮긴다 */
+.app > *,
+.settings-btn {
+  transform: translate(var(--shift-x, 0px), var(--shift-y, 0px));
+  transition: transform 2s ease-in-out;
+}
+
 .pet {
   width: min(56vw, 34svh, 280px);
   aspect-ratio: 1;
@@ -682,6 +690,26 @@ body {
   transform: translateX(20px);
 }
 
+.switch-text {
+  display: grid;
+  gap: 2px;
+}
+
+.switch-text small {
+  font-weight: 400;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.switch-row:has(input:disabled) {
+  cursor: default;
+}
+
+.switch-row input:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 @keyframes sheet-in {
   from {
     opacity: 0;
@@ -690,6 +718,11 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .app > *,
+  .settings-btn {
+    transition: none;
+  }
+
   .settings[open] {
     animation: none;
   }

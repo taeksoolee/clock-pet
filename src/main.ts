@@ -2,6 +2,7 @@ import './style.css'
 import { formatDate, getClockParts, msUntilNextSecond } from './time'
 import { createPet, isPetKind, PET_KINDS, PETS, petSvg } from './pet'
 import { loadSettings, saveSettings, type Settings } from './settings'
+import { createWakeLock } from './wake-lock'
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T
 
@@ -12,6 +13,7 @@ const secEl = $('sec')
 const spokenEl = $('spoken')
 const dateEl = $('date')
 const pet = createPet($('pet'))
+const wakeLock = createWakeLock()
 
 let settings: Settings = loadSettings()
 let lastHm = ''
@@ -28,6 +30,7 @@ function render(now: Date) {
     hmEl.textContent = parts.hm
     periodEl.textContent = parts.period
     periodEl.hidden = !parts.period
+    shiftForBurnIn()
   }
   if (parts.dateKey !== lastDateKey) {
     lastDateKey = parts.dateKey
@@ -51,9 +54,17 @@ function restart() {
   tick()
 }
 
+// 화면을 켜두는 동안 같은 픽셀이 계속 켜져 있지 않도록 분마다 ±6px 안에서 옮긴다 (OLED 번인 방지)
+function shiftForBurnIn() {
+  const offset = () => (wakeLock.supported && settings.keepAwake ? `${Math.round(Math.random() * 12 - 6)}px` : '0px')
+  document.documentElement.style.setProperty('--shift-x', offset())
+  document.documentElement.style.setProperty('--shift-y', offset())
+}
+
 function applySettings() {
   pet.setKind(settings.pet)
   dateEl.hidden = !settings.showDate
+  wakeLock.setEnabled(settings.keepAwake)
   lastHm = ''
   render(new Date())
 }
@@ -89,6 +100,12 @@ function syncForm() {
     input.checked = input.value === String(settings.hour12)
   })
   form.querySelector<HTMLInputElement>('input[name="showDate"]')!.checked = settings.showDate
+  form.querySelector<HTMLInputElement>('input[name="keepAwake"]')!.checked = settings.keepAwake
+}
+
+if (!wakeLock.supported) {
+  form.querySelector<HTMLInputElement>('input[name="keepAwake"]')!.disabled = true
+  $('keep-awake-hint').textContent = '이 브라우저에서는 지원하지 않아요'
 }
 
 // 바꾸는 즉시 저장·적용한다 (닫으면 바로 반영된 시계가 보인다)
@@ -99,6 +116,8 @@ form.addEventListener('change', () => {
     pet: isPetKind(petValue) ? petValue : settings.pet,
     hour12: data.get('hour12') === 'true',
     showDate: data.get('showDate') === 'on',
+    // 지원하지 않아 비활성화된 스위치는 FormData에 안 잡히므로 기존 값을 유지한다
+    keepAwake: wakeLock.supported ? data.get('keepAwake') === 'on' : settings.keepAwake,
   }
   saveSettings(settings)
   applySettings()
